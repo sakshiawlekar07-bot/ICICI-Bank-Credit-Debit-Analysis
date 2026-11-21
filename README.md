@@ -65,5 +65,4 @@ transaction methods.
 ## Note
 
 The dashboard figures are based on the dataset used for this project.
-The source dataset is not included in this repository unless it is
-separately uploaded and permitted for sharing.
+
