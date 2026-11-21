@@ -1,0 +1,163 @@
+
+CREATE DATABASE banking_transaction_analysis;
+USE banking_transaction_analysis;
+
+USE banking_transaction_analysis;
+
+USE banking_transaction_analysis;
+
+CREATE TABLE banking_transactions (
+    `Customer ID` VARCHAR(100),
+    `Customer Name` VARCHAR(100),
+    `Account Number` BIGINT,
+    `Transaction Date` VARCHAR(20),
+    `Transaction Type` VARCHAR(20),
+    `Amount` DECIMAL(12,2),
+    `Balance` DECIMAL(12,2),
+    `Description` VARCHAR(255),
+    `Branch` VARCHAR(100),
+    `Transaction Method` VARCHAR(50),
+    `Currency` VARCHAR(10),
+    `Bank Name` VARCHAR(100)
+);
+
+
+
+LOAD DATA LOCAL INFILE 'C:/Users/saksh/Downloads/Debit and Credit banking_data cleaned (1).csv'
+INTO TABLE banking_transactions
+CHARACTER SET utf8mb4
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n'
+IGNORE 1 LINES;
+
+-- total no.of records 
+SELECT COUNT(*) AS Total_Records
+FROM banking_transactions;
+
+
+
+-- Compare total credit and debit amounts
+
+SELECT
+    `Transaction Type`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Transaction Type`;
+
+
+-- Compare transaction activity across banks
+
+SELECT
+    `Bank Name`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Bank Name`
+ORDER BY Total_Amount DESC;
+
+
+-- Analyse transactions by payment method
+
+SELECT
+    `Transaction Method`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Transaction Method`
+ORDER BY Total_Amount DESC;
+
+
+-- Analyse transactions across different branches
+
+SELECT
+    `Branch`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Branch`
+ORDER BY Total_Transactions DESC;
+
+
+-- Analyse monthly transaction activity
+
+SELECT
+    MONTH(STR_TO_DATE(`Transaction Date`, '%d-%m-%Y')) AS Month_Number,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY Month_Number
+ORDER BY Month_Number;
+
+
+-- Find the top 10 customers by total transaction amount
+
+SELECT
+    `Customer Name`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Customer Name`
+ORDER BY Total_Amount DESC
+LIMIT 10;
+
+
+-- Compare credit and debit transactions across banks
+
+SELECT
+    `Bank Name`,
+    `Transaction Type`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Bank Name`, `Transaction Type`
+ORDER BY `Bank Name`;
+
+
+-- Analyse transactions by description
+
+SELECT
+    `Description`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Description`
+ORDER BY Total_Amount DESC;
+
+
+-- Find the 10 largest banking transactions
+
+SELECT
+    `Customer Name`,
+    `Bank Name`,
+    `Transaction Type`,
+    `Amount`,
+    `Transaction Method`
+FROM banking_transactions
+ORDER BY `Amount` DESC
+LIMIT 10;
+
+
+-- Find daily transaction activity
+
+SELECT
+    `Transaction Date`,
+    COUNT(*) AS Total_Transactions,
+    SUM(`Amount`) AS Total_Amount
+FROM banking_transactions
+GROUP BY `Transaction Date`
+ORDER BY Total_Transactions DESC
+LIMIT 10;
+
+
+-- Compare average credit and debit transaction values
+
+SELECT
+    `Transaction Type`,
+    COUNT(*) AS Total_Transactions,
+    ROUND(AVG(`Amount`), 2) AS Average_Amount,
+    ROUND(MAX(`Amount`), 2) AS Highest_Amount,
+    ROUND(MIN(`Amount`), 2) AS Lowest_Amount
+FROM banking_transactions
+GROUP BY `Transaction Type`;
